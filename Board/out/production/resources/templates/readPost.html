@@ -29,16 +29,15 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
                 <a class="nav-link" href="#">회원가입</a>
               </li>
             </ul>
-
-            <form th:action="@{|/post/list|}" th:method="get" class="d-flex">
-                <select class="form-select w-auto me-2" type="text" name="searchType">
-                    <option>제목</option>
-                    <option>제목+내용</option>
-                    <option>댓글</option>
-                </select>
-              <input class="form-control me-sm-2" type="text" name="search" placeholder="Search">
-              <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>
+              <form th:action="@{|/list|}" th:method="get" class="d-flex">
+                  <select class="form-select w-auto me-2" type="text" name="searchType">
+                      <option th:value="Subject">제목</option>
+                      <option th:value="SubjectContent">제목+내용</option>
+                      <option th:value="Comment">댓글</option>
+                  </select>
+                  <input class="form-control me-sm-2" type="text" name="searchText" placeholder="Search">
+                  <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+              </form>
           </div>
         </div>
       </nav>

@@ -36,7 +36,7 @@ public class PostRepository {
 
     public List<Post> readPage(int page, int pageCount, String searchType, String searchText) {
         List<Post> searchPost = null;
-        if(searchType.equals("제목")) {
+        if(searchType.equals("Subject")) {
             searchPost = em.createQuery("select distinct p from Post p where p.subject like :searchSubject", Post.class)
                     .setParameter("searchSubject", "%" + searchText + "%")
                     .setFirstResult(page)
@@ -44,7 +44,7 @@ public class PostRepository {
                     .getResultList();
         }
 
-        else if(searchType.equals("제목+내용")) {
+        else if(searchType.equals("SubjectContent")) {
             searchPost = em.createQuery("select distinct p from Post p " +
                             "where p.subject like :searchSubject or p.content like :searchContent", Post.class)
                     .setParameter("searchSubject", "%" + searchText + "%")
@@ -52,6 +52,17 @@ public class PostRepository {
                     .setFirstResult(page)
                     .setMaxResults(pageCount)
                     .getResultList();
+        }
+
+        else if(searchType.equals("Comment")) {
+            searchPost = em.createQuery("select distinct p from Post p left join p.commentList c " +
+                            "where c.content like :searchText", Post.class)
+                    .setParameter("searchText", "%" + searchText + "%")
+                    .setFirstResult(page)
+                    .setMaxResults(pageCount)
+                    .getResultList();
+
+            int a=0;
         }
 
         return searchPost;
@@ -102,17 +113,24 @@ public class PostRepository {
     public Long counts(String searchType, String searchText) {
         Long count = 0L;
 
-        if(searchType.equals("제목")) {
+        if(searchType.equals("Subject")) {
             count = em.createQuery("select COUNT(p) from Post p " +
                             "where p.subject like :searchSubject", Long.class)
                     .setParameter("searchSubject", "%" + searchText + "%")
                     .getSingleResult();
         }
 
-        else if(searchType.equals("제목+내용")) {
-            count = em.createQuery("select COUNT(p) from Post p " +
+        else if(searchType.equals("SubjectContent")) {
+            count = em.createQuery("select COUNT(distinct p) from Post p " +
                             "where p.subject like :searchSubject or p.content like :searchContent", Long.class)
                     .setParameter("searchSubject", "%" + searchText + "%")
+                    .setParameter("searchContent", "%" + searchText + "%")
+                    .getSingleResult();
+        }
+
+        else if(searchType.equals("Comment")) {
+            count = em.createQuery("select COUNT(distinct p) from Post p left join p.commentList c " +
+                            "where c.content like :searchContent", Long.class)
                     .setParameter("searchContent", "%" + searchText + "%")
                     .getSingleResult();
         }

@@ -2,6 +2,7 @@ package com.Study.Board.Controller;
 
 import com.Study.Board.Model.Post;
 import com.Study.Board.Model.PostDto;
+import com.Study.Board.Model.SearchDto;
 import com.Study.Board.Service.CommentService;
 import com.Study.Board.Service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ public class PostController {
     private final CommentService commentService;
 
     @GetMapping({"/list",""})
-    public String list(Model model, @RequestParam(value="page", defaultValue="1") int page,
-                       @RequestParam(required = false) String searchType, @RequestParam(required = false) String searchText) {
+    public String list(Model model, @RequestParam(required = false) String searchType, @RequestParam(required = false) String searchText,
+    @RequestParam(value="page", defaultValue="1") int page) {
 
         Page<PostDto> postDtoPage = null;
 
@@ -30,12 +31,18 @@ public class PostController {
 
         else {
             postDtoPage = postService.readPostPage(page, searchType, searchText);
+
+            SearchDto searchDto = SearchDto.builder()
+                    .searchType(searchType)
+                    .searchText(searchText).build();
+            model.addAttribute("searchDto", searchDto);
         }
 
         model.addAttribute("postDtoPage", postDtoPage);
 
         return "listPost";
     }
+
 
     @GetMapping("/post/{id}")
     public String readPost(Model model, @PathVariable Long id, @RequestParam(required = false) String act) {

@@ -17,15 +17,15 @@ public class InitClass {
 
     @PostConstruct
     public void init() {
-        for(int i = 1; i <= 30; i++) {
+        for(int i = 1; i <= 300; i++) {
             Post post = Post.builder().build();
             post.setSubject("제목" + i);
             post.setContent("내용" + i);
             postService.createPost(post);
 
-            if(i>1) {
-                commentService.createComment((long) i, "댓글 " + i + i);
-                commentService.createComment((long) i, "댓글 " + i + (i + 1));
+            if(i>0) {
+                commentService.createComment((long) i, "댓글" + i + i);
+                commentService.createComment((long) i, "댓글" + i + (i + 1));
             }
         }
     }

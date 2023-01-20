@@ -1,5 +1,6 @@
 package com.Study.Board.Model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
