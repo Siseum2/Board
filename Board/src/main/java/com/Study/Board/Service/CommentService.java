@@ -23,12 +23,14 @@ public class CommentService {
 
     public void createComment(Long postId, String content) {
         Post post = postRepository.read(postId);
-        Comment comment = Comment.builder().build();
-        comment.setContent(content);
-        comment.setPost(post);
-        post.getCommentList().add(comment);
 
-        commentRepository.save(comment);
+        if(content.isEmpty() == false) {
+            Comment comment = Comment.builder().build();
+            comment.setContent(content);
+            comment.setPost(post);
+            post.getCommentList().add(comment);
+            commentRepository.save(comment);
+        }
     }
 
     public List<CommentDto> readCommentList(Long postId) {

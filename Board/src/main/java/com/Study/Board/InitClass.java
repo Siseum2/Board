@@ -17,7 +17,7 @@ public class InitClass {
 
     @PostConstruct
     public void init() {
-        for(int i = 1; i <= 300; i++) {
+        for(int i = 1; i <= 30; i++) {
             Post post = Post.builder().build();
             post.setSubject("제목" + i);
             post.setContent("내용" + i);

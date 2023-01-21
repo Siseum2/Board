@@ -44,14 +44,18 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
 
     <div class="container">
         <h5 class="my-3 border-bottom pb-2">질문등록</h5>
-        <form th:action="@{/post}" method="post" th:if="${postDto == null}">
+        <form th:action="@{/post}" method="post" th:object="${postFormDto}" th:if="${postDto == null}">
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+            </div>
+
             <div class="mb-3">
                 <label for="subject" class="form-label">제목</label>
-                <input type="text" name="subject" id="subject" class="form-control">
+                <input type="text" name="subject" id="subject" th:field="*{subject}" class="form-control">
             </div>
             <div class="mb-3">
                 <label for="content" class="form-label">내용</label>
-                <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+                <textarea name="content" id="content" th:field="*{content}" class="form-control" rows="10"></textarea>
             </div>
             <input type="submit" value="저장하기" class="btn btn-primary my-2">
         </form>

@@ -1,16 +1,16 @@
 package com.Study.Board.Controller;
 
-import com.Study.Board.Model.Post;
-import com.Study.Board.Model.PostDto;
-import com.Study.Board.Model.SearchDto;
+import com.Study.Board.Model.*;
 import com.Study.Board.Service.CommentService;
 import com.Study.Board.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -45,7 +45,7 @@ public class PostController {
 
 
     @GetMapping("/post/{id}")
-    public String readPost(Model model, @PathVariable Long id, @RequestParam(required = false) String act) {
+    public String readPost(Model model, @PathVariable Long id, @RequestParam(required = false) String act, CommentFormDto commentFormDto) {
 
         PostDto postDto = postService.readPost(id);
         model.addAttribute("postDto", postDto);
@@ -57,17 +57,19 @@ public class PostController {
     }
 
     @GetMapping("/postForm")
-    public String createPostForm() {
+    public String createPostForm(PostFormDto postFormDto) {
         return "createPost";
     }
 
     @PostMapping("/post")
-    public String createPost(PostDto postDto) {
+    public String createPost(@Valid PostFormDto postFormDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "createPost";
+        }
+
         Post post = Post.builder()
-                .subject(postDto.getSubject())
-                .content(postDto.getContent())
-                .createdDate(postDto.getCreatedDate())
-                .modifiedDate(postDto.getModifiedDate())
+                .subject(postFormDto.getSubject())
+                .content(postFormDto.getContent())
                 .build();
 
         postService.createPost(post);
@@ -76,9 +78,13 @@ public class PostController {
     }
 
     @PutMapping("/post/{postId}")
-    public String modifyPost(PostDto postDto, @PathVariable Long postId) {
+    public String modifyPost(@PathVariable Long postId, @Valid PostFormDto postFormDto, BindingResult bindingResult) {
 
-        postService.updatePost(postId, postDto.getSubject(), postDto.getSubject());
+        if(bindingResult.hasErrors()) {
+            return "createPost";
+        }
+
+        postService.updatePost(postId, postFormDto.getSubject(), postFormDto.getSubject());
 
         return "redirect:/post/" + postId;
     }

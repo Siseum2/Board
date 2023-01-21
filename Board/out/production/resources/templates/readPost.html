@@ -90,7 +90,12 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
         </div>
         <!-- 답변 반복 끝  -->
         <!-- 답변 작성 -->
-        <form th:action="@{|/comment/${postDto.id}|}" method="post" class="my-3">
+        <form th:action="@{|/comment/${postDto.id}|}" th:object="${commentFormDto}" method="post" class="my-3">
+
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+            </div>
+
             <textarea name="content" id="comment" rows="10" class="form-control"></textarea>
             <input type="submit" value="답변등록" class="btn btn-primary my-2">
         </form>
