@@ -1,7 +1,6 @@
 package com.Study.Board.Controller;
 
 import com.Study.Board.Model.CommentDto;
-import com.Study.Board.Model.CommentFormDto;
 import com.Study.Board.Model.PostDto;
 import com.Study.Board.Service.CommentService;
 import com.Study.Board.Service.PostService;
@@ -22,14 +21,14 @@ public class CommentController {
 
     @PostMapping("/comment/{postId}")
     public String createComment(Model model, @PathVariable Long postId,
-                                @Valid CommentFormDto commentFormDto, BindingResult bindingResult) {
+                                @Valid CommentDto commentDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             PostDto postDto = postService.readPost(postId);
             model.addAttribute("postDto", postDto);
             return "readPost";
         }
 
-        commentService.createComment(postId, commentFormDto.getContent());
+        commentService.createComment(postId, commentDto.getContent());
 
         return "redirect:/post/" + postId;
     }

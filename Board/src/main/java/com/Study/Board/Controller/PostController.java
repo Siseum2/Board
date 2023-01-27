@@ -45,7 +45,7 @@ public class PostController {
 
 
     @GetMapping("/post/{id}")
-    public String readPost(Model model, @PathVariable Long id, @RequestParam(required = false) String act, CommentFormDto commentFormDto) {
+    public String readPost(Model model, @PathVariable Long id, @RequestParam(required = false) String act, CommentDto commentDto) {
 
         PostDto postDto = postService.readPost(id);
         model.addAttribute("postDto", postDto);
@@ -57,19 +57,19 @@ public class PostController {
     }
 
     @GetMapping("/postForm")
-    public String createPostForm(PostFormDto postFormDto) {
+    public String createPostForm(PostDto postDto) {
         return "createPost";
     }
 
     @PostMapping("/post")
-    public String createPost(@Valid PostFormDto postFormDto, BindingResult bindingResult) {
+    public String createPost(@Valid PostDto postDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             return "createPost";
         }
 
         Post post = Post.builder()
-                .subject(postFormDto.getSubject())
-                .content(postFormDto.getContent())
+                .subject(postDto.getSubject())
+                .content(postDto.getContent())
                 .build();
 
         postService.createPost(post);
@@ -78,13 +78,13 @@ public class PostController {
     }
 
     @PutMapping("/post/{postId}")
-    public String modifyPost(@PathVariable Long postId, @Valid PostFormDto postFormDto, BindingResult bindingResult) {
+    public String modifyPost(@PathVariable Long postId, @Valid PostDto postDto, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()) {
             return "createPost";
         }
 
-        postService.updatePost(postId, postFormDto.getSubject(), postFormDto.getSubject());
+        postService.updatePost(postId, postDto.getSubject(), postDto.getContent());
 
         return "redirect:/post/" + postId;
     }
