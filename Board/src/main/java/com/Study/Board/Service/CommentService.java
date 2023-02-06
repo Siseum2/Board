@@ -3,8 +3,10 @@ package com.Study.Board.Service;
 import com.Study.Board.Model.Comment;
 import com.Study.Board.Model.CommentDto;
 import com.Study.Board.Model.Post;
+import com.Study.Board.Model.User;
 import com.Study.Board.Repository.CommentRepository;
 import com.Study.Board.Repository.PostRepository;
+import com.Study.Board.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +21,17 @@ public class CommentService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final UtilService utilService;
 
-    public void createComment(Long postId, String content) {
+    public void createComment(String username, Long postId, String content) {
+        User user = userRepository.read(username);
         Post post = postRepository.read(postId);
 
         if(content.isEmpty() == false) {
             Comment comment = Comment.builder().build();
             comment.setContent(content);
+            comment.setUser(user);
             comment.setPost(post);
             post.getCommentList().add(comment);
             commentRepository.save(comment);

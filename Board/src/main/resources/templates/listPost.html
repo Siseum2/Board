@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,10 +23,11 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
           <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <a class="nav-link" href="#">로그인</a>
+                  <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}">로그인</a>
+                  <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">회원가입</a>
+                <a class="nav-link" sec:authorize="isAnonymous()" href="/signup">회원가입</a>
               </li>
             </ul>
               <form th:action="@{|/list|}" th:method="get" class="d-flex">
@@ -64,12 +65,12 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
               <tr th:each="postDto : ${postDtoPage}">
                 <th th:text="|${postDto.id}|"></th>
                 <td>
-                    <a th:href="@{|/post/${postDto.id}|}" th:if="${#lists.size(postDto.commentDtoList)} <= 0"
+                    <a th:href="@{|/${postDto.id}|}" th:if="${#lists.size(postDto.commentDtoList)} <= 0"
                        th:text="|${postDto.subject}|"></a>
-                    <a th:href="@{|/post/${postDto.id}|}" th:if="${#lists.size(postDto.commentDtoList)} > 0"
+                    <a th:href="@{|/${postDto.id}|}" th:if="${#lists.size(postDto.commentDtoList)} > 0"
                        th:text="|${postDto.subject}(${#lists.size(postDto.commentDtoList)})|"></a>
                 </td>
-                <td>ㅇㅇ(글쓴이)</td>
+                <td th:text="${postDto.username}"></td>
                 <td th:text="${#temporals.format(postDto.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
             </tbody>

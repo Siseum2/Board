@@ -2,8 +2,10 @@ package com.Study.Board.Service;
 
 import com.Study.Board.Model.Post;
 import com.Study.Board.Model.PostDto;
+import com.Study.Board.Model.User;
 import com.Study.Board.Repository.CommentRepository;
 import com.Study.Board.Repository.PostRepository;
+import com.Study.Board.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,9 +25,12 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final UtilService utilService;
 
-    public void createPost(Post post) {
+    public void createPost(String username, Post post) {
+        User user = userRepository.read(username);
+        post.setUser(user);
         postRepository.save(post);
     }
 

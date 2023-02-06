@@ -13,6 +13,7 @@ public class UtilService {
                 .id(post.getId())
                 .subject(post.getSubject())
                 .content(post.getContent())
+                .username(post.getUser().getUsername())
                 .createdDate(post.getCreatedDate())
                 .modifiedDate(post.getModifiedDate())
                 .build();
@@ -31,6 +32,7 @@ public class UtilService {
         CommentDto commentDto = CommentDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
+                .username(comment.getUser().getUsername())
                 .createdDate(comment.getCreatedDate())
                 .modifiedDate(comment.getModifiedDate())
                 .postId(comment.getPost().getId())

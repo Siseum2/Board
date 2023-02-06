@@ -18,6 +18,7 @@ public class PostDto {
     private String subject;
     @NotEmpty(message ="내용은 필수입니다")
     private String content;
+    private String username;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
     @Builder.Default

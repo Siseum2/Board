@@ -17,6 +17,11 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
 
+  security:
+    user:
+      name: user
+      password: 1234
+
   mvc:
     hiddenmethod:
       filter:
