@@ -4,6 +4,7 @@ spring:
     url: jdbc:mysql://localhost:3306/board?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: 1234
+    sql-script-encoding: UTF-8
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -27,6 +28,7 @@ spring:
       filter:
         enabled: true
 
+
 logging:
   level:
     org:
@@ -34,3 +36,10 @@ logging:
         type:
           descriptor:
             sql: trace
+
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true

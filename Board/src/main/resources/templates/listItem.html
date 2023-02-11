@@ -29,52 +29,53 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
               <li class="nav-item">
                 <a class="nav-link" sec:authorize="isAnonymous()" href="/signup">회원가입</a>
               </li>
-               <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link" href="/item">시세조회</a>
-               </li>
+              </li>
             </ul>
               <form th:action="@{|/list|}" th:method="get" class="d-flex">
                   <select class="form-select w-auto me-2" type="text" name="searchType">
                       <option th:value="Subject">제목</option>
-                      <option th:value="SubjectContent">제목+내용</option>
-                      <option th:value="Comment">댓글</option>
+                      <option th:selected="${searchDto?.searchType} == 'SubjectContent'"  th:value="SubjectContent">제목+내용</option>
+                      <option th:selected="${searchDto?.searchType} == 'Comment'" th:value="Comment">댓글</option>
                   </select>
-                  <input class="form-control me-sm-2" type="text" name="searchText" placeholder="Search">
+                  <input class="form-control me-sm-2" type="text" name="searchText" th:if="${searchDto == null}" placeholder="Search">
+                  <input class="form-control me-sm-2" type="text" name="searchText" th:if="${searchDto != null}" th:value="${searchDto.searchText}">
                   <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
               </form>
           </div>
         </div>
       </nav>
 
-    <div class="container">
-        <h5 class="my-3 border-bottom pb-2">질문등록</h5>
-        <form th:action="@{/post}" method="post" th:object="${postDto}" th:if="${postDto.id == null}">
-            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-                <div th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+      <div class="container my-3">
+        <div class="row my-3">
+            <div class="col-4">
+                <form th:action="@{|/item|}" th:method="get" class="d-flex">
+                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemText == null}" placeholder="아이템명">
+                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemText != null}" th:value="${searchItemText}">
+                    <button class="btn btn-secondary my-2 my-sm-0 col-3" type="submit">검색</button>
+                </form>
             </div>
+        </div>
 
-            <div class="mb-3">
-                <label for="subject" class="form-label">제목</label>
-                <input type="text" name="subject" id="subject" th:field="*{subject}" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="content" class="form-label">내용</label>
-                <textarea name="content" id="content" th:field="*{content}" class="form-control" rows="10"></textarea>
-            </div>
-            <input type="submit" value="저장하기" class="btn btn-primary my-2">
-        </form>
+      <div class="row mt-1 justify-content-center">
+          <div class="col-sm-4">
+              <table class="table table-sm text-center">
+                  <tbody>
+                  <tr th:each="itemDto : ${itemDtoList}">
+                      <td>
+                          <button class="btn btn-outline-dark btn-block my-2 my-sm-0 btn-sm" style="width:90%"
+                                  th:onclick="|location.href='@{/item(itemId=${itemDto.itemId})}'|">
+                              <img th:src="${itemDto.itemImageUrl}" height="30">
+                              <span th:text="${itemDto.itemName}"></span>
+                          </button>
+                      </td>
+                  </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
 
-        <form th:action="@{|/post/${postDto.id}|}" th:method="put" class="my-3" th:if="${postDto.id != null}">
-            <div class="mb-3">
-                <label for="subject" class="form-label">제목</label>
-                <input type="text" th:value="${postDto.subject}" name="subject" id="subject" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="content" class="form-label">내용</label>
-                <textarea name="content" th:text="${postDto.content}" id="content" class="form-control" rows="10"></textarea>
-            </div>
-            <input type="submit" value="저장하기" class="btn btn-primary my-2">
-        </form>
     </div>
 </body>
 </html>

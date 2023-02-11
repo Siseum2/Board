@@ -28,6 +28,9 @@
                 <li class="nav-item">
                     <a class="nav-link" sec:authorize="isAnonymous()" href="/signup">회원가입</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/item">시세조회</a>
+                </li>
             </ul>
             <form th:action="@{|/list|}" th:method="get" class="d-flex">
                 <select class="form-select w-auto me-2" type="text" name="searchType">
