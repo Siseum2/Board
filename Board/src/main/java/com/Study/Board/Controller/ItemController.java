@@ -2,6 +2,7 @@ package com.Study.Board.Controller;
 
 
 import com.Study.Board.Model.ItemDto;
+import com.Study.Board.Model.ItemPriceDto;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,11 +40,21 @@ public class ItemController {
         return "listItem";
     }
 
-    @GetMapping("/item")
+    @GetMapping("/item/price")
     public String itemController2(Model model, @RequestParam(required=true) String searchItemId)  {
 
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(BASE_URL);
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
-        return "listItem";
+        WebClient webClient = WebClient.builder()
+                .uriBuilderFactory(factory)
+                .build();
+
+        List<ItemPriceDto> itemPriceDtoList = new ArrayList<>();
+        callSearchAuctionItemPriceApi(webClient, itemPriceDtoList, searchItemId, "30");
+        model.addAttribute("searchItemName", itemPriceDtoList.get(0).getItemName());
+
+        return "itemPriceChart";
     }
 
     private List<ItemDto> getSearchItemDtoList(String searchItemText) throws UnsupportedEncodingException {
@@ -112,6 +125,38 @@ public class ItemController {
                         })
                         .doFinally(signalType -> itemDtoList.sort(Comparator.comparing(ItemDto::getItemName)))
                         .blockLast();
+    }
+
+    private void callSearchAuctionItemPriceApi(WebClient webClient, List<ItemPriceDto> itemPriceDtoList, String itemId, String limit) {
+        String auctionItemPrice = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/auction-sold")
+                        .queryParam("itemId", itemId)
+                        .queryParam("limit", limit)
+                        .queryParam("apikey", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class).block();
+
+        JSONObject auctionItemPriceResponseJsonObject = new JSONObject(auctionItemPrice);
+        JSONArray auctionItemPriceResponseJsonArray = auctionItemPriceResponseJsonObject.getJSONArray("rows");
+
+        for (Object arr : auctionItemPriceResponseJsonArray) {
+            JSONObject itemPrice = (JSONObject) arr;
+
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime soldDate = LocalDateTime.parse((String) itemPrice.get("soldDate"), inputFormatter);
+
+            ItemPriceDto itemPriceDto = ItemPriceDto.builder()
+                    .soldDate(soldDate)
+                    .itemId(itemId)
+                    .itemName((String) itemPrice.get("itemName"))
+                    .count(Long.valueOf(itemPrice.get("count").toString()))
+                    .unitPrice(Long.valueOf(itemPrice.get("unitPrice").toString()))
+                    .build();
+
+            itemPriceDtoList.add(itemPriceDto);
+        }
     }
 
 
