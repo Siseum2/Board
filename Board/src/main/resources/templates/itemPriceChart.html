@@ -52,8 +52,8 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
         <div class="row my-3">
             <div class="col-4">
                 <form th:action="@{|/item|}" th:method="get" class="d-flex">
-                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemText == null}" placeholder="아이템명">
-                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemText != null}" th:value="${searchItemText}">
+                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemName == null}" placeholder="아이템명">
+                    <input class="form-control me-sm-2" type="text" name="searchItemText" th:if="${searchItemName != null}" th:value="${searchItemName}">
                     <button class="btn btn-secondary my-2 my-sm-0 col-3" type="submit">검색</button>
                 </form>
             </div>
@@ -61,42 +61,72 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
 
           <div class="container my-2">
               <div style="width: 1000px; height: 900px;">
-                  <!--차트가 그려질 부분-->
                   <canvas id="myChart"></canvas>
-                  <script>
-      var ctx = document.getElementById('myChart').getContext('2d');
-      var myChart = new Chart(ctx, {
+     <script th:inline="javascript">
+     //<![CDATA[
+      let context = document.getElementById('myChart').getContext('2d');
+      let itemPriceDtoList = [[${itemPriceDtoList}]];
+      let itemUnitPriceList = new Array();
+      let itemSoldDateList = new Array();
+      let itemSoldCountList = new Array();
+
+      for(var itemPriceDto of itemPriceDtoList) {
+        itemUnitPriceList.push(itemPriceDto.unitPrice);
+
+        let date = new Date(itemPriceDto.soldDate);
+        let formattedDate = date.toLocaleString('en-US',
+        {month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).replace(',', '');
+        itemSoldDateList.push(formattedDate);
+
+        itemSoldCountList.push(itemPriceDto.count);
+      }
+
+      let myChart = new Chart(context, {
         type: 'line',
         data: {
-          labels: ['Time 1', 'Time 2', 'Time 3', 'Time 4', 'Time 5'],
+          labels: itemSoldDateList,
           datasets: [{
-            label: 'Price',
+            label: '가격',
             yAxisID: 'Price',
-            data: [20, 10, 100, 60, 80],
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            data: itemUnitPriceList,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
             borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
+            borderWidth: 2
           },
           {
-            label: 'Amount',
+            label: '물량',
             yAxisID: 'Amount',
-            data: [100, 200, 300, 400, 500],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            data: itemSoldCountList,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
+            borderWidth: 2
           }]
         },
         options: {
+          tooltips: {
+            mode: 'index',
+            intersect: false
+          },
+          title: {
+            display: true,
+            text: itemPriceDtoList[0].itemName
+          },
           scales: {
+            xAxes: [{
+                scaleLabel: {
+                display: true,
+                labelString: '거래 시간'
+                }
+            }],
             yAxes: [{
               id: 'Price',
               position: 'left',
               scaleLabel: {
                 display: true,
-                labelString: 'Price'
+                labelString: '가격'
               },
               ticks: {
-                beginAtZero: true
+                beginAtZero: false
               }
             },
             {
@@ -104,15 +134,16 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
               position: 'right',
               scaleLabel: {
                 display: true,
-                labelString: 'Amount'
+                labelString: '물량'
               },
               ticks: {
-                beginAtZero: true
+                beginAtZero: false
               }
             }]
           }
         }
       });
+      //]]>
     </script>
               </div>
           </div>

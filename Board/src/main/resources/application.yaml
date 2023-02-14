@@ -28,7 +28,6 @@ spring:
       filter:
         enabled: true
 
-
 logging:
   level:
     org:
@@ -37,9 +36,3 @@ logging:
           descriptor:
             sql: trace
 
-
-server:
-  servlet:
-    encoding:
-      charset: UTF-8
-      force-response: true

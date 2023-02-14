@@ -59,19 +59,19 @@
 
         <div class="mb-3">
             <label for="username" class="form-label">사용자ID</label>
-            <input type="text" class="form-control" id="username" name="username" th:value="${userDto?.username}">
+            <input type="text" class="form-control" style="width: 30%" id="username" name="username" th:value="${userDto?.username}">
         </div>
         <div class="mb-3">
             <label for="password1" class="form-label">비밀번호</label>
-            <input type="password" class="form-control" id="password1" name="password1" th:value="${userDto.password1}">
+            <input type="password" class="form-control" style="width: 30%" id="password1" name="password1" th:value="${userDto.password1}">
         </div>
         <div class="mb-3">
             <label for="password2" class="form-label">비밀번호 확인</label>
-            <input type="password" class="form-control" id="password2" name="password2" th:value="${userDto?.password2}">
+            <input type="password" class="form-control" style="width: 30%" id="password2" name="password2" th:value="${userDto?.password2}">
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">이메일</label>
-            <input type="email" class="form-control" id="email" name="email" th:value="${userDto?.email}">
+            <input type="email" class="form-control" style="width: 30%" id="email" name="email" th:value="${userDto?.email}">
         </div>
         <button type="submit" class="btn btn-primary">회원가입</button>
     </form>

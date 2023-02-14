@@ -41,7 +41,7 @@ public class ItemController {
     }
 
     @GetMapping("/item/price")
-    public String itemController2(Model model, @RequestParam(required=true) String searchItemId)  {
+    public String itemPriceController(Model model, @RequestParam(required=true) String searchItemId)  {
 
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(BASE_URL);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
@@ -51,8 +51,9 @@ public class ItemController {
                 .build();
 
         List<ItemPriceDto> itemPriceDtoList = new ArrayList<>();
-        callSearchAuctionItemPriceApi(webClient, itemPriceDtoList, searchItemId, "30");
+        callSearchAuctionItemPriceApi(webClient, itemPriceDtoList, searchItemId, "100");
         model.addAttribute("searchItemName", itemPriceDtoList.get(0).getItemName());
+        model.addAttribute("itemPriceDtoList", itemPriceDtoList);
 
         return "itemPriceChart";
     }
