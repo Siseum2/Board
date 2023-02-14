@@ -27,7 +27,7 @@ import java.util.List;
 @Controller
 public class ItemController {
     private final String BASE_URL = "https://api.neople.co.kr/df";
-    private final String API_KEY = "MnXFAMlODJraqY2sD6ln42lCvQazzch3";
+    private final String API_KEY = "API 작성";
 
     @GetMapping("/item")
     public String itemController(Model model, @RequestParam(required=false) String searchItemText) throws UnsupportedEncodingException {
