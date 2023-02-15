@@ -1,10 +1,12 @@
 package com.Study.Board.Controller;
 
 
-import com.Study.Board.Model.ItemDto;
-import com.Study.Board.Model.ItemPriceDto;
+import com.Study.Board.Model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +23,14 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 @Controller
 public class ItemController {
     private final String BASE_URL = "https://api.neople.co.kr/df";
-    private final String API_KEY = "API 작성";
+    private final String API_KEY = "MnXFAMlODJraqY2sD6ln42lCvQazzch3";
 
     @GetMapping("/item")
     public String itemController(Model model, @RequestParam(required=false) String searchItemText) throws UnsupportedEncodingException {
@@ -41,7 +44,8 @@ public class ItemController {
     }
 
     @GetMapping("/item/price")
-    public String itemPriceController(Model model, @RequestParam(required=true) String searchItemId)  {
+    public String itemPriceController(Model model, @RequestParam(required=true) String searchItemId,
+                                      @RequestParam(value="page", defaultValue="1") int page)  {
 
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(BASE_URL);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
@@ -51,9 +55,32 @@ public class ItemController {
                 .build();
 
         List<ItemPriceDto> itemPriceDtoList = new ArrayList<>();
-        callSearchAuctionItemPriceApi(webClient, itemPriceDtoList, searchItemId, "100");
+        callSearchSoldItemPriceApi(webClient, itemPriceDtoList, searchItemId, "100");
         model.addAttribute("searchItemName", itemPriceDtoList.get(0).getItemName());
         model.addAttribute("itemPriceDtoList", itemPriceDtoList);
+
+        List<ItemAuctionDto> itemAuctionDtoList = new ArrayList<>();
+        callSearchAuctionItemPriceApi(webClient, itemAuctionDtoList, searchItemId, "400");
+
+        Long total = Long.valueOf(itemAuctionDtoList.size());
+        int startPage = (page-1)*10;
+        int pageCount = 10;
+
+        int remainPage = (int) (total - (page-1) * 10);
+        if(remainPage < pageCount) {
+            pageCount = remainPage;
+        }
+
+        List<ItemAuctionDto> itemAuctionDtoPageList = new ArrayList<>();
+
+        for(int i = 0; i < pageCount; i++) {
+            itemAuctionDtoPageList.add(itemAuctionDtoList.get(startPage + i));
+        }
+
+        Pageable pageable = PageRequest.of(page-1 ,10);
+        PageImpl<ItemAuctionDto> itemAuctionDtoPage = new PageImpl<>(itemAuctionDtoPageList, pageable, total);
+        model.addAttribute("itemAuctionDtoPage", itemAuctionDtoPage);
+        model.addAttribute("itemId", searchItemId);
 
         return "itemPriceChart";
     }
@@ -128,7 +155,7 @@ public class ItemController {
                         .blockLast();
     }
 
-    private void callSearchAuctionItemPriceApi(WebClient webClient, List<ItemPriceDto> itemPriceDtoList, String itemId, String limit) {
+    private void callSearchSoldItemPriceApi(WebClient webClient, List<ItemPriceDto> itemPriceDtoList, String itemId, String limit) {
         String auctionItemPrice = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auction-sold")
@@ -157,6 +184,41 @@ public class ItemController {
                     .build();
 
             itemPriceDtoList.add(itemPriceDto);
+        }
+    }
+
+    private void callSearchAuctionItemPriceApi(WebClient webClient, List<ItemAuctionDto> itemAuctionDtoList, String itemId, String limit) {
+        String auctionItemPrice = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/auction")
+                        .queryParam("itemId", itemId)
+                        .queryParam("limit", limit)
+                        .queryParam("apikey", API_KEY)
+                        .queryParam("sort","unitPrice:asc")
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class).block();
+
+        JSONObject auctionItemPriceResponseJsonObject = new JSONObject(auctionItemPrice);
+        JSONArray auctionItemPriceResponseJsonArray = auctionItemPriceResponseJsonObject.getJSONArray("rows");
+
+        for (Object arr : auctionItemPriceResponseJsonArray) {
+            JSONObject itemAuction = (JSONObject) arr;
+
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime regDate = LocalDateTime.parse((String) itemAuction.get("regDate"), inputFormatter);
+
+            ItemAuctionDto itemAuctionDto = ItemAuctionDto.builder()
+                    .registrationDate(regDate)
+                    .itemId(itemId)
+                    .itemName((String) itemAuction.get("itemName"))
+                    .itemImageUrl(getItemImageUrl(itemId))
+                    .itemCount(Long.valueOf(itemAuction.get("count").toString()))
+                    .itemPrice(Long.valueOf(itemAuction.get("currentPrice").toString()))
+                    .itemUnitPrice(Long.valueOf(itemAuction.get("unitPrice").toString()))
+                    .build();
+
+            itemAuctionDtoList.add(itemAuctionDto);
         }
     }
 

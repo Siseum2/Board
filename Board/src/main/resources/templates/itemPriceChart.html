@@ -59,8 +59,8 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
             </div>
         </div>
 
-          <div class="container my-2">
-              <div style="width: 1000px; height: 900px;">
+      <div class="container my-3">
+              <div style="width: 1000px; height: 550px;">
                   <canvas id="myChart"></canvas>
      <script th:inline="javascript">
      //<![CDATA[
@@ -147,7 +147,60 @@ integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0
     </script>
               </div>
           </div>
+    </div>
 
+
+    <div class="container my-3">
+        <div class="p-1">
+            <h5><strong>현재 경매장 등록 목록</strong></h5>
+        </div>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr>
+                <th scope="col">아이템 이름</th>
+                <th scope="col">등록 시간</th>
+                <th scope="col">물량</th>
+                <th scope="col">가격</th>
+                <th scope="col">개당 가격</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="itemAuctionDto : ${itemAuctionDtoPage}">
+                <th>
+                    <img th:src="${itemAuctionDto.itemImageUrl}">
+                    <span th:text="|${itemAuctionDto.itemName}|"></span>
+                </th>
+                <td th:text="${#temporals.format(itemAuctionDto.registrationDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${itemAuctionDto.itemCount}"></td>
+                <td th:text="${itemAuctionDto.itemPrice}"></td>
+                <td th:text="${itemAuctionDto.itemUnitPrice}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <!-- 페이징처리 시작 -->
+        <div style="height: 200px" th:if="${!itemAuctionDtoPage.isEmpty()}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${!itemAuctionDtoPage.hasPrevious} ? 'disabled'">
+                    <a class="page-link" th:href="@{/item/price(searchItemId=${itemId}, page=${itemAuctionDtoPage.number})}">
+                        <span>이전</span>
+                    </a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(1, itemAuctionDtoPage.totalPages)}"
+                    th:if="${page >= itemAuctionDtoPage.number - 5 and page <= itemAuctionDtoPage.number + 5}"
+                    th:classappend="${page == itemAuctionDtoPage.number + 1} ? 'active'"
+                    class="page-item">
+                    <a th:text="${page}" class="page-link" th:href="@{/item/price(searchItemId=${itemId}, page=${page})}"></a>
+                </li>
+                <li class="page-item" th:classappend="${!itemAuctionDtoPage.hasNext} ? 'disabled'">
+                    <a class="page-link" th:href="@{/item/price(searchItemId=${itemId}, page=${itemAuctionDtoPage.number+2})}">
+                        <span>다음</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
 </body>

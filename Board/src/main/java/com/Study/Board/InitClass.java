@@ -31,7 +31,7 @@ public class InitClass {
 
         userService.createUser(user);
 
-        for(int i = 1; i <= 30; i++) {
+        for(int i = 1; i <= 24; i++) {
             Post post = Post.builder().build();
             post.setSubject("제목" + i);
             post.setContent("내용" + i);
