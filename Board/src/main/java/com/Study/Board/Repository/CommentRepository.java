@@ -1,6 +1,7 @@
 package com.Study.Board.Repository;
 
 import com.Study.Board.Model.Comment;
+import com.Study.Board.Model.Enum.SearchType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -41,9 +42,9 @@ public class CommentRepository {
         em.clear();
     }
 
-    public List<Comment> search(String searchType, String searchText) {
+    public List<Comment> search(SearchType searchType, String searchText) {
         List<Comment> searchComment = null;
-        if(searchType.equals("댓글")) {
+        if(searchType.equals(SearchType.COMMENT)) {
             searchComment = em.createQuery("select c from Comment c where c.content like :search", Comment.class)
                     .setParameter("search", "%" + searchText + "%")
                     .getResultList();

@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.List;
 @Entity
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper=true)
 public class User extends BaseEntity {
 
     @Column(nullable = false, length = 30, unique = true)

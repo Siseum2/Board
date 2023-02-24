@@ -8,6 +8,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UtilService {
+
+    public boolean isAlphaNumericOrAlpha(String str) {
+        boolean isAlphaNumeric = str.matches("^[a-zA-Z0-9]+$");
+        boolean isOnlyNumeric = str.matches("^[0-9]+$");
+
+        return (isAlphaNumeric && !isOnlyNumeric);
+    }
+
     public PostDto postConvertPostDto(Post post) {
         PostDto postDto = PostDto.builder()
                 .id(post.getId())

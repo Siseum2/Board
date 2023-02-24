@@ -1,5 +1,6 @@
 package com.Study.Board.Model;
 
+import com.Study.Board.Model.Enum.SearchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class SearchDto {
-    private String searchType;
+    private SearchType searchType;
     private String searchText;
 }

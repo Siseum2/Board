@@ -1,12 +1,10 @@
 package com.Study.Board.Repository;
 
-import com.Study.Board.Model.Post;
 import com.Study.Board.Model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

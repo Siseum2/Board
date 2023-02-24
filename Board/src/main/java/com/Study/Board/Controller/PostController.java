@@ -2,10 +2,10 @@ package com.Study.Board.Controller;
 
 import com.Study.Board.Config.Auth.PrincipalDetail;
 import com.Study.Board.Model.CommentDto;
+import com.Study.Board.Model.Enum.SearchType;
 import com.Study.Board.Model.Post;
 import com.Study.Board.Model.PostDto;
 import com.Study.Board.Model.SearchDto;
-import com.Study.Board.Service.CommentService;
 import com.Study.Board.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,20 +21,20 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    private final CommentService commentService;
 
     @GetMapping({"/list",""})
-    public String list(Model model, @RequestParam(required = false) String searchType, @RequestParam(required = false) String searchText,
-    @RequestParam(value="page", defaultValue="1") int page) {
+    public String list(Model model, @RequestParam(required = false, value="searchType") SearchType searchType,
+                       @RequestParam(required = false, value="searchText") String searchText,
+                       @RequestParam(value="page", defaultValue="1") int page) {
 
         Page<PostDto> postDtoPage = null;
 
         if(searchType == null) {
-            postDtoPage = postService.readPostPage(page);
+            postDtoPage = postService.searchPostPage(page);
         }
 
         else {
-            postDtoPage = postService.readPostPage(page, searchType, searchText);
+            postDtoPage = postService.searchPostPage(page, searchType, searchText);
 
             SearchDto searchDto = SearchDto.builder()
                     .searchType(searchType)
@@ -77,12 +77,7 @@ public class PostController {
             return "createPost";
         }
 
-        Post post = Post.builder()
-                .subject(postDto.getSubject())
-                .content(postDto.getContent())
-                .build();
-
-        postService.createPost(principalDetail.getUsername(), post);
+        Post post = postService.createPost(principalDetail.getUsername(), postDto);
 
         return "redirect:/" + post.getId();
     }

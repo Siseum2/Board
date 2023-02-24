@@ -1,5 +1,6 @@
 package com.Study.Board.Service;
 
+import com.Study.Board.Model.Enum.SearchType;
 import com.Study.Board.Model.Post;
 import com.Study.Board.Model.PostDto;
 import com.Study.Board.Model.User;
@@ -28,10 +29,17 @@ public class PostService {
     private final UserRepository userRepository;
     private final UtilService utilService;
 
-    public void createPost(String username, Post post) {
+    public Post createPost(String username, PostDto postDto) {
+        Post post = Post.builder()
+                .subject(postDto.getSubject())
+                .content(postDto.getContent())
+                .build();
+
         User user = userRepository.read(username);
         post.setUser(user);
         postRepository.save(post);
+
+        return post;
     }
 
     public PostDto readPost(Long postId) {
@@ -40,18 +48,18 @@ public class PostService {
         return postDto;
     }
 
-    public Page<PostDto> readPostPage(int page) {
+    public Page<PostDto> searchPostPage(int page) {
         Long total = postRepository.counts();
         int startPage = 0;
-        int pageCount = 10;
+        int remainPageCount = 10;
 
         startPage = (int) (total - page * 10);
         if(startPage < 0) {
-            pageCount = pageCount + startPage;
+            remainPageCount = remainPageCount + startPage;
             startPage = 0;
         }
 
-        List<Post> postList = postRepository.readPage(startPage, pageCount);
+        List<Post> postList = postRepository.readPostPage(startPage, remainPageCount);
         List<PostDto> postDtoList = new ArrayList<>();
         Collections.reverse(postList);
 
@@ -64,7 +72,7 @@ public class PostService {
         return postDtoPage;
     }
 
-    public Page<PostDto> readPostPage(int page, String searchType, String search) {
+    public Page<PostDto> searchPostPage(int page, SearchType searchType, String search) {
         Long total = postRepository.counts(searchType, search);
         int startPage = 0;
         int pageCount = 10;
@@ -75,7 +83,7 @@ public class PostService {
             startPage = 0;
         }
 
-        List<Post> postList = postRepository.readPage(startPage, pageCount, searchType, search);
+        List<Post> postList = postRepository.readPostPage(startPage, pageCount, searchType, search);
         List<PostDto> postDtoList = new ArrayList<>();
         Collections.reverse(postList);
 
@@ -109,18 +117,6 @@ public class PostService {
     public void deletePost(Long postId) {
         commentRepository.deleteAll(postId);
         postRepository.delete(postId);
-    }
-
-    public List<PostDto> searchPostList(String searchType, String searchText) {
-        List<Post> searchList = postRepository.search(searchType, searchText);
-
-        List<PostDto> searchPostDtoList = new ArrayList<>();
-
-        for(Post searchPost : searchList) {
-            searchPostDtoList.add(utilService.postConvertPostDto(searchPost));
-        }
-
-        return searchPostDtoList;
     }
 
 }

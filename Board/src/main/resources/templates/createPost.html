@@ -35,9 +35,9 @@
             </ul>
             <form th:action="@{|/list|}" th:method="get" class="d-flex">
                 <select class="form-select w-auto me-2" type="text" name="searchType">
-                    <option th:value="Subject">제목</option>
-                    <option th:value="SubjectContent">제목+내용</option>
-                    <option th:value="Comment">댓글</option>
+                    <option th:value="SUBJECT">제목</option>
+                    <option th:selected="${searchDto?.searchType?.name} == 'SUBJECT_CONTENT'" th:value="SUBJECT_CONTENT">제목+내용</option>
+                    <option th:selected="${searchDto?.searchType?.name} == 'COMMENT'" th:value="COMMENT">댓글</option>
                 </select>
                 <input class="form-control me-sm-2" type="text" name="searchText" placeholder="Search">
                 <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>

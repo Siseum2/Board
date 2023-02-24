@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper=true)
 public class Post extends BaseEntity {
 
     @Column(nullable = false, length = 30)
@@ -25,7 +25,7 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user; // 수정
+    private User user;
 
     @Builder.Default
     @OneToMany(mappedBy = "post")

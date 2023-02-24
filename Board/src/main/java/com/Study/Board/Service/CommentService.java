@@ -2,6 +2,7 @@ package com.Study.Board.Service;
 
 import com.Study.Board.Model.Comment;
 import com.Study.Board.Model.CommentDto;
+import com.Study.Board.Model.Enum.SearchType;
 import com.Study.Board.Model.Post;
 import com.Study.Board.Model.User;
 import com.Study.Board.Repository.CommentRepository;
@@ -66,7 +67,7 @@ public class CommentService {
         commentRepository.deleteAll(postId);
     }
 
-    public List<CommentDto> searchCommentList(String searchType, String searchText) {
+    public List<CommentDto> searchCommentList(SearchType searchType, String searchText) {
         List<Comment> searchCommentList = commentRepository.search(searchType, searchText);
         List<CommentDto> searchCommentDtoList = new ArrayList<>();
 
