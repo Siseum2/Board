@@ -19,7 +19,7 @@ public class PostRepository {
     }
 
     public Post read(Long postId) {
-        Post post = em.createQuery("select distinct p from Post p left join fetch p.commentList where p.id = :id", Post.class)
+        Post post = em.createQuery("select distinct p from Post p left join fetch p.commentList left join fetch p.user where p.id = :id", Post.class)
                 .setParameter("id", postId)
                 .getSingleResult();
 

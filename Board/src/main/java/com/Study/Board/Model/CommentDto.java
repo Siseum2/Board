@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDto {
     private Long id;
-    @NotEmpty(message ="댓글 내용은 필수입니다")
+    @NotBlank(message ="댓글 내용은 필수입니다")
     private String content;
     private String username;
     private LocalDateTime createdDate;

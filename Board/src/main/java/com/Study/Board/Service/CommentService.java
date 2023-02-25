@@ -34,6 +34,7 @@ public class CommentService {
             comment.setContent(content);
             comment.setUser(user);
             comment.setPost(post);
+            user.getCommentList().add(comment);
             post.getCommentList().add(comment);
             commentRepository.save(comment);
         }
